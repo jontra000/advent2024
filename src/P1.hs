@@ -11,17 +11,19 @@ run2 = solve2 . parse
 inputLocation :: String
 inputLocation = "inputs/input1"
 
-parse :: String -> [[Int]]
-parse = transpose . map parseLine . lines
+parse :: String -> ([Int], [Int])
+parse = take2 . transpose . map parseLine . lines
+    where take2 (leftList:rightList:_) = (leftList, rightList)
+          take2 _ = error "expected two columns of input"
 
 parseLine :: String -> [Int]
 parseLine = map read . words
 
-solve1 :: [[Int]] -> Int
-solve1 (input1:input2:_) = sum $ map abs $ zipWith (-) (sort input1) (sort input2)
+solve1 :: ([Int], [Int]) -> Int
+solve1 (leftList, rightList) = sum $ map abs $ zipWith (-) (sort leftList) (sort rightList)
 
-solve2 :: [[Int]] -> Int
-solve2 (input1:input2:_) = sum $ map (similarityScore input2) input1
+solve2 :: ([Int], [Int]) -> Int
+solve2 (leftList, rightList) = sum $ map (similarityScore rightList) leftList
 
 similarityScore :: [Int] -> Int -> Int
-similarityScore list2 x = x * length (filter (==x) list2)
+similarityScore xs x = x * length (filter (==x) xs)
