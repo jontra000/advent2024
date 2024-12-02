@@ -27,6 +27,8 @@ library
   exposed-modules:
       Lib
       P1
+      P2
+      PX
   other-modules:
       Paths_advent2024
   autogen-modules:
