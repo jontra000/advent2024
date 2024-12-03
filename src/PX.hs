@@ -7,7 +7,7 @@ run2 :: String -> Int
 run2 = solve2 . parse
 
 inputLocation :: String
-inputLocation = "inputs/input1"
+inputLocation = "inputs/inputX"
 
 parse = map parseLine . lines
 
