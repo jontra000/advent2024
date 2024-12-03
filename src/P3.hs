@@ -1,45 +1,48 @@
 module P3 (run1, run2, inputLocation) where
 import Data.List.Split (splitOn)
 import Text.Read (readMaybe)
-import Data.Char (isDigit)
 
 run1 :: String -> Int
-run1 = solve1 . parse
+run1 = solve1 . parse1
 
 run2 :: String -> Int
-run2 = solve2
+run2 = solve2 . parse2
 
 inputLocation :: String
 inputLocation = "inputs/input3"
 
-parse = splitOn "mul"
+parse1 :: [Char] -> [String]
+parse1 = splitOn "mul"
 
-solve1 :: [[Char]] -> Int
+solve1 :: [String] -> Int
 solve1 = sum . map parseMultiplication
 
-parseMultiplication :: [Char] -> Int
-parseMultiplication ('(':xs) 
-    | ')' `elem` xs = tryMultiply $ map readMaybe $ splitOn "," $ takeWhile (/=')') xs
+parseMultiplication :: String -> Int
+parseMultiplication ('(':xs)
+    | ')' `elem` xs = tryMultiply $ parseArguments xs
     | otherwise = 0
 parseMultiplication _ = 0
 
+parseArguments :: String -> [Maybe Int]
+parseArguments = map readMaybe . splitOn "," . takeWhile (/=')')
+
 tryMultiply :: [Maybe Int] -> Int
-tryMultiply (Just a: Just b:[]) = a * b
+tryMultiply [Just a, Just b] = a * b
 tryMultiply _ = 0
 
-solve2 ('m':'u':'l':'(':xs) =
-    let (a, xs') = span isDigit xs
-    in  case xs' of
-        (',':xs'') ->
-            let (b, xs''') = span isDigit xs''
-            in  case xs''' of
-                (')':xs'''') -> (read a * read b) + solve2 xs''''
-                _ -> solve2 xs'''
-        _ -> solve2 xs'
-solve2 ('d':'o':'n':'\'':'t':'(':')':xs) = reenable xs
-solve2 [] = 0
-solve2 (_:xs) = solve2 xs
+parse2 :: String -> [String]
+parse2 = splitOn "don't()"
 
-reenable ('d':'o':'(':')':xs) = solve2 xs
-reenable [] = 0
-reenable (_:xs) = reenable xs
+solve2 :: [String] -> Int
+solve2 [] = 0
+solve2 (x:xs) = run1 x + sum (map parseDontBlock xs)
+
+parseDontBlock :: String -> Int
+parseDontBlock = run1 . parseDos
+
+parseDos :: String -> String
+parseDos = concat . safeTail . splitOn "do()"
+
+safeTail :: [a] -> [a]
+safeTail [] = []
+safeTail (_:xs) = xs
