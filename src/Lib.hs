@@ -1,4 +1,4 @@
-module Lib (memoize, dijkstra, textToCoordMap, Coord) where
+module Lib (memoize, dijkstra, textToCoordMap, Coord, addCoords) where
 
 import qualified Data.Map as M
 
@@ -6,6 +6,9 @@ type Coord = (Int, Int)
 
 textToCoordMap :: String -> M.Map Coord Char
 textToCoordMap = M.fromList . concat . zipWith (\y line -> zipWith(\x c -> ((x,y), c)) [0..] line) [0..] . lines
+
+addCoords :: Coord -> Coord -> Coord
+addCoords (x1, y1) (x2, y2) = (x1+x2, y1+y2)
 
 type DistanceMap a = M.Map a Int
 data Node a = Node Int (DistanceMap a)
