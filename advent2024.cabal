@@ -30,8 +30,10 @@ library
       P2
       P3
       P4
-      P4alt
+      P4SubMatrix
+      P4Transforms
       P5
+      P6
       PX
   other-modules:
       Paths_advent2024

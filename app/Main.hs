@@ -1,6 +1,6 @@
 module Main (main) where
 
-import P5
+import P4SubMatrix
 
 main :: IO ()
 main = do

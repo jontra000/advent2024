@@ -1,4 +1,4 @@
-module P4alt (run1, run2, inputLocation) where
+module P4Transforms (run1, run2, inputLocation) where
 import Lib (Coord)
 import Data.Maybe (catMaybes)
 import Data.List (transpose, tails)
