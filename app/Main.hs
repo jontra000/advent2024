@@ -1,6 +1,6 @@
 module Main (main) where
 
-import P4alt
+import P5
 
 main :: IO ()
 main = do

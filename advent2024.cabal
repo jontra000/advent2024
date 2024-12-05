@@ -31,6 +31,7 @@ library
       P3
       P4
       P4alt
+      P5
       PX
   other-modules:
       Paths_advent2024
