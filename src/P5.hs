@@ -1,6 +1,11 @@
 module P5 (run1, run2, inputLocation) where
 import Data.List.Split (splitOn)
-import Data.List (delete)
+import Data.List (delete, find)
+import Data.Maybe (fromJust)
+
+type Rule = (Int, Int)
+type Update = [Int]
+data Input = Input [Rule] [Update]
 
 run1 :: String -> Int
 run1 = solve1 . parse
@@ -11,36 +16,56 @@ run2 = solve2 . parse
 inputLocation :: String
 inputLocation = "inputs/input5"
 
-parse :: String -> ([(Int, Int)], [[Int]])
-parse = parse' . splitOn [""] . lines
+parse :: String -> Input
+parse = parseBlocks . splitOn [""] . lines
 
-parse' :: [[String]] -> ([(Int, Int)], [[Int]])
-parse' (ruleBlock:printBlock:_) = (map (parseRule . splitOn "|") ruleBlock, map parsePrint printBlock)
+parseBlocks :: [[String]] -> Input
+parseBlocks (ruleBlock:update:_) = Input (map (parseRule . splitOn "|") ruleBlock) (map parseUpdate update)
+parseBlocks e = error ("Unexpected input " ++ show e)
 
-parseRule :: [String] -> (Int, Int)
+parseRule :: [String] -> Rule
 parseRule (a:b:_) = (read a, read b)
+parseRule e = error ("Badly formatted rule" ++ show e)
 
-parsePrint :: String -> [Int]
-parsePrint = map read . splitOn ","
+parseUpdate :: String -> Update
+parseUpdate = map read . splitOn ","
 
-solve1 :: ([(Int, Int)], [[Int]]) -> Int
-solve1 (rules, printBlocks) = sum $ map middlePage $ filter (isValid rules) printBlocks
+solve1 :: Input -> Int
+solve1 = sum . map middlePage . validBlocks
 
-isValid :: [(Int, Int)] -> [Int] -> Bool
-isValid rules printBlock = all (ruleApplies printBlock) rules
+validBlocks :: Input -> [Update]
+validBlocks (Input rules updates) = filter (isValid rules) updates
 
-ruleApplies :: [Int] -> (Int, Int) -> Bool
-ruleApplies printBlock (before,after) = after `notElem` printBlock || before `notElem` printBlock || before `elem` (takeWhile (/=after) printBlock)
+isValid :: [Rule] -> Update -> Bool
+isValid rules update = all (rulePasses update) rules
 
-middlePage :: [Int] -> Int
-middlePage xs = xs !! ((length xs) `div` 2)
+rulePasses :: Update -> Rule -> Bool
+rulePasses update rule@(before, after) = not (ruleApplies update rule) || before `elem` takeWhile (/=after) update
 
-solve2 :: ([(Int, Int)], [[Int]]) -> Int
-solve2 (rules, printBlocks) = sum $ map middlePage $ map (correctErrors rules) $ filter (not . isValid rules) printBlocks
+middlePage :: Update -> Int
+middlePage xs = xs !! (length xs `div` 2)
 
-correctErrors :: [(Int, Int)] -> [Int] -> [Int]
+solve2 :: Input -> Int
+solve2 input@(Input rules _) = sum $ map (middlePage . correctErrors rules) $ invalidBlocks input
+
+invalidBlocks :: Input -> [Update]
+invalidBlocks (Input rules updates) = filter (not . isValid rules) updates
+
+correctErrors :: [Rule] -> Update -> [Int]
 correctErrors _ [] = []
 correctErrors rules block =
-    let rules' = filter (\(a,b) -> a `elem` block && b `elem` block) rules
-        next = head $ filter (\i -> all (\(_, after) -> after /= i) rules') block
+    let rules' = filter (ruleApplies block) rules
+        next = firstItem rules' block
     in  next : correctErrors rules' (delete next block)
+
+firstItem :: [Rule] -> Update -> Int
+firstItem rules = fromJust . find (noPageBefore rules)
+
+noPageBefore :: [Rule] -> Int -> Bool
+noPageBefore rules i = not (any (hasPredecessor i) rules)
+
+hasPredecessor :: Int -> Rule -> Bool
+hasPredecessor i (_, after) = after == i
+
+ruleApplies :: Update -> Rule -> Bool
+ruleApplies update (before, after) = after `elem` update && before `elem` update
