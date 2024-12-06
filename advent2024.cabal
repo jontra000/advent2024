@@ -33,6 +33,7 @@ library
       P4SubMatrix
       P4Transforms
       P5
+      P5CustomSort
       P6
       PX
   other-modules:

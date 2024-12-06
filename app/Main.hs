@@ -1,6 +1,6 @@
 module Main (main) where
 
-import P4SubMatrix
+import P5CustomSort
 
 main :: IO ()
 main = do
