@@ -25,6 +25,7 @@ source-repository head
 
 library
   exposed-modules:
+      Dijkstra
       Lib
       P1
       P2
