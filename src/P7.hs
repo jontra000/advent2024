@@ -1,5 +1,7 @@
 module P7 (run1, run2, inputLocation) where
 
+data Input = Input { target :: Int, terms :: [Int] }
+
 run1 :: String -> Int
 run1 = solve1 . parse
 
@@ -9,32 +11,31 @@ run2 = solve2 . parse
 inputLocation :: String
 inputLocation = "inputs/input7"
 
-parse :: String -> [(Int, [Int])]
+parse :: String -> [Input]
 parse = map (parseLine . words) . lines
 
-parseLine :: [String] -> (Int, [Int])
-parseLine (x:xs) = (read (init x), map read xs)
+parseLine :: [String] -> Input
+parseLine (x:xs) = Input (read (init x)) (map read xs)
+parseLine [] = error "Empty line not expected"
 
-solve1 :: [(Int, [Int])] -> Int
-solve1 = sum . map fst . filter hasSolution
+solve1 :: [Input] -> Int
+solve1 = solve [(+), (*)]
 
-hasSolution :: (Int, [Int]) -> Bool
-hasSolution (result, terms) = any (==result) $ generateResults (reverse terms)
+solve2 :: [Input] -> Int
+solve2 = solve [(+), (*), concatenation]
 
-generateResults :: [Int] -> [Int]
-generateResults [x] = [x]
-generateResults [] = [0]
-generateResults (x:xs) = map (x+) (generateResults xs) ++ map (*x) (generateResults xs)
+solve :: [Int -> Int -> Int] -> [Input] -> Int
+solve operations = sum . map target . filter (hasSolution operations)
 
-solve2 :: [(Int, [Int])] -> Int
-solve2 = sum . map fst . filter hasSolution2
+concatenation :: Int -> Int -> Int
+concatenation a b = read $ show a ++ show b
 
-hasSolution2 :: (Int, [Int]) -> Bool
-hasSolution2 (result, (term1:terms)) = any (==result) $ generateResults2 term1 terms
+hasSolution :: [Int -> Int -> Int] -> Input -> Bool
+hasSolution operations (Input result (term1:terms)) = elem result $ generateResults operations term1 terms
+hasSolution _ (Input _ []) = False
 
-generateResults2 :: Int -> [Int] -> [Int]
-generateResults2 acc [] = [acc]
-generateResults2 acc (x:xs) =
-    let nextAcc = [acc+x, acc*x, read (show acc ++ show x)]
-    in  concatMap (\acc' -> generateResults2 acc' xs) nextAcc
-
+generateResults :: [Int -> Int -> Int] -> Int -> [Int] -> [Int]
+generateResults _ acc [] = [acc]
+generateResults operations acc (x:xs) = concatMap go operations
+    where go op = generateResults operations acc' xs
+            where acc' = op acc x
