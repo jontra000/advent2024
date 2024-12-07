@@ -1,5 +1,7 @@
 module P7 (run1, run2, inputLocation) where
 
+import Data.NumberLength.Int (lengthInt)
+
 data Input = Input { target :: Int, terms :: [Int] }
 
 run1 :: String -> Int
@@ -28,14 +30,16 @@ solve :: [Int -> Int -> Int] -> [Input] -> Int
 solve operations = sum . map target . filter (hasSolution operations)
 
 concatenation :: Int -> Int -> Int
-concatenation a b = read $ show a ++ show b
+concatenation a b = a * (10 ^ lengthInt b) + b
 
 hasSolution :: [Int -> Int -> Int] -> Input -> Bool
-hasSolution operations (Input result (term1:terms)) = elem result $ generateResults operations term1 terms
+hasSolution operations (Input target (term1:terms)) = hasSolution' target operations term1 terms
 hasSolution _ (Input _ []) = False
 
-generateResults :: [Int -> Int -> Int] -> Int -> [Int] -> [Int]
-generateResults _ acc [] = [acc]
-generateResults operations acc (x:xs) = concatMap go operations
-    where go op = generateResults operations acc' xs
-            where acc' = op acc x
+hasSolution' :: Int -> [Int -> Int -> Int] -> Int -> [Int] -> Bool
+hasSolution' target _ acc [] = acc == target
+hasSolution' target operations acc (x:xs) 
+    | acc > target = False
+    | otherwise = any go operations
+        where go op = hasSolution' target operations acc' xs
+                where acc' = op acc x
