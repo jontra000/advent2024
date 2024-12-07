@@ -1,0 +1,120 @@
+	Sat Dec  7 12:20 2024 Time and Allocation Profiling Report  (Final)
+
+	   advent2024-exe.exe +RTS -N -p -RTS
+
+	total time  =        0.11 secs   (354 ticks @ 1000 us, 16 processors)
+	total alloc = 1,315,373,056 bytes  (excludes profiling overheads)
+
+COST CENTRE             MODULE SRC                         %time %alloc
+
+ysForX                  P6     src\P6.hs:69:1-82            45.8   22.9
+xsForY                  P6     src\P6.hs:75:1-82            38.4   25.5
+checkLoop               P6     src\P6.hs:(113,1)-(116,54)    3.7   10.2
+solve2.potentialLocs    P6     src\P6.hs:107:11-59           2.5    0.1
+solve1                  P6     src\P6.hs:26:1-38             2.0    0.1
+obstructionList         P6     src\P6.hs:(88,1)-(94,42)      1.7    0.0
+findNextObstruction     P6     src\P6.hs:(78,1)-(79,98)      1.7    1.2
+obstructionMap.upList   P6     src\P6.hs:60:9-39             0.8    4.4
+makeRightList           P6     src\P6.hs:72:1-84             0.8   11.1
+nextLoc                 P6     src\P6.hs:(97,1)-(100,45)     0.6    2.7
+walkVertices.walk'      P6     src\P6.hs:(52,11)-(55,51)     0.3    2.0
+obstructionMap.leftList P6     src\P6.hs:62:9-42             0.3    4.3
+textToCoordMap          Lib    src\Lib.hs:9:1-112            0.3    2.5
+makeDownList            P6     src\P6.hs:66:1-83             0.0   11.1
+
+
+                                                                                                                    individual      inherited
+COST CENTRE                            MODULE                         SRC                        no.     entries  %time %alloc   %time %alloc
+
+MAIN                                   MAIN                           <built-in>                 208           0    0.0    0.0   100.0  100.0
+ CAF                                   GHC.Weak.Finalize              <entire-module>            385           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.StdHandles              <entire-module>            349           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Handle.Internals        <entire-module>            344           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Handle.FD               <entire-module>            343           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.FD                      <entire-module>            341           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Exception               <entire-module>            340           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Encoding.CodePage       <entire-module>            331           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.IO.Encoding                <entire-module>            330           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.Event.Windows.ConsoleEvent <entire-module>            310           0    0.0    0.0     0.0    0.0
+ CAF                                   GHC.Conc.POSIX                 <entire-module>            293           0    0.0    0.0     0.0    0.0
+ CAF:inputLocation                     P6                             src\P6.hs:20:1-13          226           0    0.0    0.0     0.0    0.0
+  inputLocation                        P6                             src\P6.hs:20:1-31          418           1    0.0    0.0     0.0    0.0
+ CAF:main1                             Main                           <no location info>         215           0    0.0    0.0     0.0    0.0
+  main                                 Main                           app\Main.hs:(6,1)-(11,17)  416           1    0.0    0.0     0.0    0.0
+ CAF:obstructions                      P6                             src\P6.hs:34:1-12          227           0    0.0    0.0     0.0    0.0
+  obstructions                         P6                             src\P6.hs:34:1-53          441           1    0.0    0.0     0.0    0.0
+ CAF:parse                             P6                             src\P6.hs:23:1-5           228           0    0.0    0.0     0.0    0.0
+  parse                                P6                             src\P6.hs:23:1-37          424           1    0.0    0.0     0.0    0.0
+ CAF:run1                              P6                             src\P6.hs:14:1-4           229           0    0.0    0.0     0.0    0.0
+  run1                                 P6                             src\P6.hs:14:1-21          420           1    0.0    0.0     0.0    0.0
+ CAF:run2                              P6                             src\P6.hs:17:1-4           238           0    0.0    0.0     0.0    0.0
+  run2                                 P6                             src\P6.hs:17:1-21          445           1    0.0    0.0     0.0    0.0
+ CAF:solve1                            P6                             src\P6.hs:26:1-6           222           0    0.0    0.0     0.0    0.0
+  solve1                               P6                             src\P6.hs:26:1-38          422           1    0.0    0.0     0.0    0.0
+ CAF:startLocation                     P6                             src\P6.hs:37:1-13          225           0    0.0    0.0     0.0    0.0
+  startLocation                        P6                             src\P6.hs:37:1-64          431           1    0.0    0.0     0.0    0.0
+ CAF:textToCoordMap                    Lib                            src\Lib.hs:9:1-14          242           0    0.0    0.0     0.0    0.0
+  textToCoordMap                       Lib                            src\Lib.hs:9:1-112         433           1    0.0    0.0     0.0    0.0
+ CAF:textToCoordMap1                   Lib                            <no location info>         241           0    0.0    0.0     0.0    0.0
+  textToCoordMap                       Lib                            src\Lib.hs:9:1-112         435           0    0.0    0.0     0.0    0.0
+ main                                  Main                           app\Main.hs:(6,1)-(11,17)  417           0    0.0    0.1   100.0  100.0
+  main.result1                         Main                           app\Main.hs:8:9-28         419           1    0.0    0.0     2.5    1.8
+   run1                                P6                             src\P6.hs:14:1-21          421           0    0.0    0.0     2.5    1.8
+    parse                              P6                             src\P6.hs:23:1-37          425           0    0.0    0.0     0.3    1.6
+     initialState                      P6                             src\P6.hs:(29,1)-(31,51)   426           1    0.0    0.0     0.0    0.2
+      initialState.xMax                P6                             src\P6.hs:30:11-51         439           1    0.0    0.1     0.0    0.1
+      initialState.yMax                P6                             src\P6.hs:31:11-51         440           1    0.0    0.1     0.0    0.1
+      obstructions                     P6                             src\P6.hs:34:1-53          442           0    0.0    0.0     0.0    0.0
+      startLocation                    P6                             src\P6.hs:37:1-64          432           0    0.0    0.0     0.0    0.0
+     textToCoordMap                    Lib                            src\Lib.hs:9:1-112         434           0    0.3    1.2     0.3    1.4
+      textToCoordMap.\                 Lib                            src\Lib.hs:9:60-97         436         130    0.0    0.2     0.0    0.2
+       textToCoordMap.\.\              Lib                            src\Lib.hs:9:76-85         437       16900    0.0    0.0     0.0    0.0
+    solve1                             P6                             src\P6.hs:26:1-38          423           0    2.0    0.1     2.3    0.1
+     walk                              P6                             src\P6.hs:(40,1)-(47,50)   427           1    0.0    0.0     0.3    0.1
+      walk.walk'                       P6                             src\P6.hs:(41,11)-(47,50)  428        5232    0.3    0.0     0.3    0.1
+       outOfBounds                     P6                             src\P6.hs:103:1-68         429        5232    0.0    0.0     0.0    0.0
+       walk.walk'.loc'                 P6                             src\P6.hs:42:17-35         430        5232    0.0    0.0     0.0    0.0
+        move                           Lib                            src\Lib.hs:(15,1)-(18,29)  438        5232    0.0    0.0     0.0    0.0
+       rotateRight                     Lib                            src\Lib.hs:(21,1)-(24,27)  443         150    0.0    0.0     0.0    0.0
+  main.result2                         Main                           app\Main.hs:9:9-28         444           1    0.0    0.0    97.5   98.2
+   run2                                P6                             src\P6.hs:17:1-21          446           0    0.0    0.0    97.5   98.2
+    solve2                             P6                             src\P6.hs:(106,1)-(107,59) 449           1    0.0    0.0    97.2   96.5
+     causesLoop                        P6                             src\P6.hs:110:1-156        463        4664    0.3    0.2    94.6   96.4
+      checkLoop                        P6                             src\P6.hs:(113,1)-(116,54) 479      415162    3.7   10.2     3.7   10.2
+       compare                         Lib                            src\Lib.hs:6:69-71         484     4424298    0.0    0.0     0.0    0.0
+      walkVertices                     P6                             src\P6.hs:(50,1)-(55,51)   464        4664    0.0    0.0    90.7   86.0
+       walkVertices.walk'              P6                             src\P6.hs:(52,11)-(55,51)  465      412186    0.3    2.0     4.5    6.5
+        findNextObstruction            P6                             src\P6.hs:(78,1)-(79,98)   466      412186    1.7    1.2     4.2    4.5
+         nextObstructionCoord          P6                             src\P6.hs:(82,1)-(85,46)   478      412186    0.3    0.5     0.3    0.5
+         obstructionList               P6                             src\P6.hs:(88,1)-(94,42)   467      412186    1.7    0.0     1.7    0.0
+          obstructionList.i            P6                             src\P6.hs:(89,9)-(93,25)   468      412186    0.0    0.0     0.0    0.0
+          compare                      Lib                            src\Lib.hs:6:69-71         473      335455    0.0    0.0     0.0    0.0
+         nextLoc                       P6                             src\P6.hs:(97,1)-(100,45)  480      407522    0.6    2.7     0.6    2.7
+       walkVertices.nextObstructionMap P6                             src\P6.hs:51:11-69         469        4664    0.0    0.0    86.2   79.5
+        obstructionMap                 P6                             src\P6.hs:(58,1)-(63,101)  470        4664    0.0    0.2    86.2   79.5
+         >=                            Lib                            src\Lib.hs:6:69-71         471       13992    0.0    0.0     0.0    0.0
+          <                            Lib                            src\Lib.hs:6:69-71         472       13992    0.0    0.0     0.0    0.0
+         obstructionMap.downList       P6                             src\P6.hs:59:9-50          475        4664    0.0    0.0    45.8   34.0
+          makeDownList                 P6                             src\P6.hs:66:1-83          476        4664    0.0   11.1    45.8   34.0
+           ysForX                      P6                             src\P6.hs:69:1-82          477      606320   45.8   22.9    45.8   22.9
+         obstructionMap.leftList       P6                             src\P6.hs:62:9-42          485        4664    0.3    4.3     0.3    4.3
+         obstructionMap.rightList      P6                             src\P6.hs:61:9-52          481        4664    0.0    0.0    39.3   36.6
+          makeRightList                P6                             src\P6.hs:72:1-84          482        4664    0.8   11.1    39.3   36.6
+           xsForY                      P6                             src\P6.hs:75:1-82          483      606320   38.4   25.5    38.4   25.5
+         obstructionMap.upList         P6                             src\P6.hs:60:9-39          474        4664    0.8    4.4     0.8    4.4
+     solve2.potentialLocs              P6                             src\P6.hs:107:11-59        450           1    2.5    0.1     2.5    0.1
+      walk                             P6                             src\P6.hs:(40,1)-(47,50)   451           1    0.0    0.0     0.0    0.1
+       walk.walk'                      P6                             src\P6.hs:(41,11)-(47,50)  452        5232    0.0    0.0     0.0    0.1
+        outOfBounds                    P6                             src\P6.hs:103:1-68         453        5232    0.0    0.0     0.0    0.0
+        walk.walk'.loc'                P6                             src\P6.hs:42:17-35         454        5232    0.0    0.0     0.0    0.0
+         move                          Lib                            src\Lib.hs:(15,1)-(18,29)  459        5232    0.0    0.0     0.0    0.0
+        rotateRight                    Lib                            src\Lib.hs:(21,1)-(24,27)  486         150    0.0    0.0     0.0    0.0
+    parse                              P6                             src\P6.hs:23:1-37          447           0    0.0    0.0     0.3    1.6
+     initialState                      P6                             src\P6.hs:(29,1)-(31,51)   448           1    0.0    0.0     0.0    0.2
+      initialState.xMax                P6                             src\P6.hs:30:11-51         460           1    0.0    0.1     0.0    0.1
+      initialState.yMax                P6                             src\P6.hs:31:11-51         461           1    0.0    0.1     0.0    0.1
+      obstructions                     P6                             src\P6.hs:34:1-53          462           0    0.0    0.0     0.0    0.0
+      startLocation                    P6                             src\P6.hs:37:1-64          455           0    0.0    0.0     0.0    0.0
+     textToCoordMap                    Lib                            src\Lib.hs:9:1-112         456           0    0.0    1.2     0.3    1.4
+      textToCoordMap.\                 Lib                            src\Lib.hs:9:60-97         457         130    0.3    0.2     0.3    0.2
+       textToCoordMap.\.\              Lib                            src\Lib.hs:9:76-85         458       16900    0.0    0.0     0.0    0.0
