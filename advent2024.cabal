@@ -37,6 +37,7 @@ library
       P5CustomSort
       P6
       P7
+      P8
       PX
   other-modules:
       Paths_advent2024
