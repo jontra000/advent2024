@@ -1,4 +1,4 @@
-module Lib (memoize, textToCoordMap, Coord, addCoords, Direction(..), move, rotateRight, rotateLeft, reverseDir) where
+module Lib (memoize, textToCoordMap, Coord, addCoords, subtractCoords, Direction(..), move, rotateRight, rotateLeft, reverseDir) where
 
 import qualified Data.Map as M
 
@@ -10,6 +10,9 @@ textToCoordMap = M.fromList . concat . zipWith (\y line -> zipWith(\x c -> ((x,y
 
 addCoords :: Coord -> Coord -> Coord
 addCoords (x1, y1) (x2, y2) = (x1+x2, y1+y2)
+
+subtractCoords :: Coord -> Coord -> Coord
+subtractCoords (x1,y1) (x2,y2) = (x1-x2, y1-y2)
 
 move :: Direction -> Coord -> Coord
 move DirUp (x,y) = (x, y-1)
