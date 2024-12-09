@@ -1,6 +1,6 @@
 module Main (main) where
 
-import P8
+import P9
 
 main :: IO ()
 main = do

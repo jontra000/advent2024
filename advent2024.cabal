@@ -38,6 +38,7 @@ library
       P6
       P7
       P8
+      P9
       PX
   other-modules:
       Paths_advent2024
