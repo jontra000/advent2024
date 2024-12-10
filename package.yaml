@@ -25,6 +25,7 @@ dependencies:
 - split
 - matrix
 - number-length >= 0.2.1.0
+- vector
 
 ghc-options:
 - -Wall

@@ -1,54 +1,62 @@
 module P9 (run1, run2, inputLocation) where
 import Data.List.Split (chunksOf)
 import Data.Char (digitToInt)
+import qualified Data.Set as S
 
+data Block = Block { index :: Int, full :: Int, empty :: Int }
+
+run1 :: String -> Int
 run1 = solve1 . parse
 
+run2 :: String -> Int
 run2 = solve2 . parse
 
 inputLocation :: String
 inputLocation = "inputs/input9"
 
-parse :: String -> [Int]
-parse = map digitToInt
+parse :: String -> [Block]
+parse = zipWith makeBlock [0..] . chunksOf 2 . map digitToInt
 
--- solve1 :: [Int] -> Integer
-solve1 = checksum . chunksOf 2
+makeBlock :: Int -> [Int] -> Block
+makeBlock ix [full] = Block ix full 0
+makeBlock ix [full, empty] = Block ix full empty
+makeBlock _ _ = error "Invalid block"
 
--- checksum :: [[Int]] -> Integer
-checksum xs = sum $ zipWith (*) [0..] $ checksum' xs' (reverse xs')
-    where xs' = zip [0..] xs
+solve1 :: [Block] -> Int
+solve1 = checksum . compact1
 
-checksum' :: [(Int, [Int])] -> [(Int, [Int])] -> [Int]
-checksum' [] _ = []
-checksum' _ [] = []
-checksum' ((i, (full:empty:_)):xs) ((j, (full':_)):xsrev)
-    | j <= i = replicate full' i
-    | empty == full' = replicate full i ++ replicate empty j ++ checksum' xs xsrev
-    | empty < full' = replicate full i ++ replicate empty j ++ checksum' xs ((j, [full' - empty]):xsrev)
-    | otherwise = replicate full i ++ replicate full' j ++ if j > i+1 then checksum' ((i, [0, empty - full']):xs) xsrev else []
+compact1 :: [Block] -> [Int]
+compact1 blocks = take totalBlocks $ writeBlocks blocks blocksRev
+    where totalBlocks = sum $ map full blocks
+          blocksRev = concatMap writeBlock $ reverse blocks
 
-solve2 = checksum2 . chunksOf 2
+writeBlocks :: [Block] -> [Int] -> [Int]
+writeBlocks [] _ = []
+writeBlocks (Block ix full empty : xs) revXs = replicate full ix ++ toFill ++ writeBlocks xs revXs'
+            where (toFill, revXs') = splitAt empty revXs
 
-checksum2 = checksum2' . moveBlocks . makeDisk 0
+writeBlock :: Block -> [Int]
+writeBlock (Block ix full _) = replicate full ix
+    
+checksum :: [Int] -> Int
+checksum = sum . zipWith (*) [0..]
 
-makeDisk _ [] = []
-makeDisk i ((full:empty:_):xs) = (i, full, empty) : makeDisk (i+1) xs
-makeDisk i ([full]:xs) = (i, full, 0) : makeDisk (i+1) xs
+solve2 :: [Block] -> Int
+solve2 = checksum . compact2
 
-moveBlocks xs = foldl moveBlocks' xs (reverse xs)
+compact2 :: [Block] -> [Int]
+compact2 = compact2' S.empty
 
-moveBlocks' [] _ = []
-moveBlocks' (x@(j, full', empty'):xs) next@(i, full, _)
-    | j == i = x : xs
-    | full > empty' = x : moveBlocks' xs next
-    | otherwise = (j, full', 0) : dropMovedBlock i (i, full, empty' - full) xs
+compact2' :: S.Set Int -> [Block] -> [Int]
+compact2' _ [] = []
+compact2' movedBlocks ((Block ix full empty):xs) = replicate full value ++ fillEmpty movedBlocks xs empty (reverse xs)
+        where value = if S.member ix movedBlocks then 0 else ix
 
-dropMovedBlock i prev@(prevI, prevFull, prevEmpty) (next@(i', full, empty):xs)
-    | i == i' = (prevI, prevFull, prevEmpty + full + empty) : xs
-    | otherwise = prev : dropMovedBlock i next xs
-dropMovedBlock _ _ [] = []
-
-checksum2' = sum . zipWith (*) [0..] . concatMap toIds
-
-toIds (i, full, empty) = replicate full i ++ replicate empty 0
+fillEmpty :: S.Set Int -> [Block] -> Int -> [Block] -> [Int]
+fillEmpty movedBlocks xs toFill [] = replicate toFill 0 ++ compact2' movedBlocks xs
+fillEmpty movedBlocks xs toFill ((Block ix full _):xsRev)
+    | toFill < full = fillEmpty movedBlocks xs toFill xsRev
+    | S.member ix movedBlocks = fillEmpty movedBlocks xs toFill xsRev
+    | otherwise = replicate full ix ++ fillEmpty movedBlocks' xs remainingSpace xsRev
+        where movedBlocks' = S.insert ix movedBlocks
+              remainingSpace = toFill - full
