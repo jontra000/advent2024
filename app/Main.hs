@@ -1,6 +1,6 @@
 module Main (main) where
 
-import P12
+import P12Corners
 
 main :: IO ()
 main = do
