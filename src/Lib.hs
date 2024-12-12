@@ -3,7 +3,7 @@ module Lib (memoize, textToCoordMap, Coord, addCoords, subtractCoords, Direction
 import qualified Data.Map as M
 
 type Coord = (Int, Int)
-data Direction = DirUp | DirDown | DirLeft | DirRight deriving (Eq, Ord)
+data Direction = DirUp | DirDown | DirLeft | DirRight deriving (Eq, Ord, Show)
 
 textToCoordMap :: String -> M.Map Coord Char
 textToCoordMap = M.fromList . concat . zipWith (\y line -> zipWith(\x c -> ((x,y), c)) [0..] line) [0..] . lines
