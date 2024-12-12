@@ -33,11 +33,11 @@ blinkStone x
 splitStone :: String -> [Int]
 splitStone = map read . tupleToList . splitInHalf
 
+tupleToList :: (a, a) -> [a]
+tupleToList (a, b) = [a, b]
+
 splitInHalf :: [a] -> ([a], [a])
 splitInHalf s = splitAt (length s `div` 2) s
-
-tupleToList :: (a, a) -> [a]
-tupleToList (a,b) = [a,b]
 
 solve2 :: [Int] -> Int
 solve2 = fst . stoneCountAfterBlinks M.empty 75
