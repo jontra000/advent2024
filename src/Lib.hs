@@ -1,4 +1,4 @@
-module Lib (memoize, textToCoordMap, Coord, addCoords, subtractCoords, Direction(..), move, rotateRight, rotateLeft, reverseDir) where
+module Lib (memoize, textToCoordMap, Coord, addCoords, subtractCoords, mulCoord, Direction(..), move, rotateRight, rotateLeft, reverseDir) where
 
 import qualified Data.Map as M
 
@@ -13,6 +13,9 @@ addCoords (x1, y1) (x2, y2) = (x1+x2, y1+y2)
 
 subtractCoords :: Coord -> Coord -> Coord
 subtractCoords (x1,y1) (x2,y2) = (x1-x2, y1-y2)
+
+mulCoord :: Int -> Coord -> Coord
+mulCoord n (x,y) = (n*x,n*y)
 
 move :: Direction -> Coord -> Coord
 move DirUp (x,y) = (x, y-1)
