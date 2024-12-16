@@ -7,13 +7,18 @@ import Dijkstra (dijkstra, Node(..))
 import qualified Dijkstra16 as D16
 import Data.Maybe (mapMaybe)
 
+type NodeKey = (Coord, Direction)
+
+run1 :: String -> Maybe Int
 run1 = solve1 . parse
 
+run2 :: String -> Maybe Int
 run2 = solve2 . parse
 
 inputLocation :: String
 inputLocation = "inputs/input16"
 
+parse :: String -> M.Map Coord Char
 parse = textToCoordMap
 
 solve1 :: M.Map Coord Char -> Maybe Int
@@ -22,18 +27,19 @@ solve1 m = dijkstra nodes' (start, DirRight) (map (\d -> (end, d)) [DirLeft, Dir
           start = head $ M.keys $ M.filter (=='S') m
           end = head $ M.keys $ M.filter (=='E') m
 
-nodes :: M.Map Coord Char -> M.Map (Coord, Direction) (Node (Coord, Direction))
+nodes :: M.Map Coord Char -> M.Map NodeKey (Node NodeKey)
 nodes m = M.fromList $ concatMap (node spaces) spaces
     where spaces = M.keysSet (M.filter (/='#') m)
 
-node :: S.Set Coord -> Coord -> [((Coord, Direction), Node (Coord, Direction))]
+node :: S.Set Coord -> Coord -> [(NodeKey, Node NodeKey)]
 node spaces c = map (dirNode spaces c) [DirLeft, DirRight, DirDown, DirUp]
 
-dirNode :: S.Set Coord -> Coord -> Direction -> ((Coord, Direction), Node (Coord, Direction))
+dirNode :: S.Set Coord -> Coord -> Direction -> (NodeKey, Node NodeKey)
 dirNode spaces c dir =
     let distanceMap = M.fromList $ mapMaybe (dirNode' spaces c dir) [DirLeft, DirRight, DirDown, DirUp]
     in  ((c, dir), Node 0 distanceMap)
 
+dirNode' :: S.Set Coord -> Coord -> Direction -> Direction -> Maybe (NodeKey, Int)
 dirNode' spaces c dirStart dirEnd
     | S.notMember c' spaces = Nothing
     | dirStart == dirEnd = Just ((c', dirEnd), 1)
@@ -41,27 +47,33 @@ dirNode' spaces c dirStart dirEnd
     | otherwise = Just ((c', dirEnd), 1001)
         where c' = step c dirEnd
 
+step :: Coord -> Direction -> Coord
 step (x,y) DirLeft = (x-1,y)
 step (x,y) DirRight = (x+1,y)
 step (x,y) DirDown = (x,y+1)
 step (x,y) DirUp = (x,y-1)
 
+isOpposite :: Direction -> Direction -> Bool
 isOpposite DirUp DirDown = True
 isOpposite DirDown DirUp = True
 isOpposite DirLeft DirRight = True
 isOpposite DirRight DirLeft = True
 isOpposite _ _ = False
 
+solve2 :: M.Map Coord Char -> Maybe Int
 solve2 m = combineBestPaths $ mapMaybe (D16.dijkstra nodes' (start, DirRight) . (\d -> (end, d))) [DirLeft, DirRight, DirUp, DirDown]
     where nodes' = mapNodes $ nodes m
           start = head $ M.keys $ M.filter (=='S') m
           end = head $ M.keys $ M.filter (=='E') m
 
+mapNodes :: M.Map k (Node a) -> M.Map k (D16.Node a)
 mapNodes = M.map (\(Node a b) -> D16.Node a b)
 
+combineBestPaths :: [(Int, S.Set NodeKey)] -> Maybe Int
 combineBestPaths [] = Nothing
 combineBestPaths results =
     let shortestPath = minimum (map fst results)
     in  Just $ length $ S.unions $ map (uniqueCoords . snd) $ filter ((==shortestPath) . fst) results
 
+uniqueCoords :: S.Set (Coord, b) -> S.Set Coord
 uniqueCoords = S.map fst
