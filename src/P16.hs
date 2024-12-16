@@ -3,7 +3,7 @@ module P16 (run1, run2, inputLocation) where
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Lib (Direction(..), textToCoordMap, Coord)
-import Dijkstra (dijkstra, Node(..))
+import Dijkstra (dijkstra)
 import qualified Dijkstra16 as D16
 import Data.Maybe (mapMaybe)
 
@@ -27,17 +27,17 @@ solve1 m = dijkstra nodes' (start, DirRight) (map (\d -> (end, d)) [DirLeft, Dir
           start = head $ M.keys $ M.filter (=='S') m
           end = head $ M.keys $ M.filter (=='E') m
 
-nodes :: M.Map Coord Char -> M.Map NodeKey (Node NodeKey)
+nodes :: M.Map Coord Char -> M.Map NodeKey (M.Map NodeKey Int)
 nodes m = M.fromList $ concatMap (node spaces) spaces
     where spaces = M.keysSet (M.filter (/='#') m)
 
-node :: S.Set Coord -> Coord -> [(NodeKey, Node NodeKey)]
+node :: S.Set Coord -> Coord -> [(NodeKey, M.Map NodeKey Int)]
 node spaces c = map (dirNode spaces c) [DirLeft, DirRight, DirDown, DirUp]
 
-dirNode :: S.Set Coord -> Coord -> Direction -> (NodeKey, Node NodeKey)
+dirNode :: S.Set Coord -> Coord -> Direction -> (NodeKey, M.Map NodeKey Int)
 dirNode spaces c dir =
     let distanceMap = M.fromList $ mapMaybe (dirNode' spaces c dir) [DirLeft, DirRight, DirDown, DirUp]
-    in  ((c, dir), Node 0 distanceMap)
+    in  ((c, dir), distanceMap)
 
 dirNode' :: S.Set Coord -> Coord -> Direction -> Direction -> Maybe (NodeKey, Int)
 dirNode' spaces c dirStart dirEnd
@@ -62,12 +62,9 @@ isOpposite _ _ = False
 
 solve2 :: M.Map Coord Char -> Maybe Int
 solve2 m = combineBestPaths $ mapMaybe (D16.dijkstra nodes' (start, DirRight) . (\d -> (end, d))) [DirLeft, DirRight, DirUp, DirDown]
-    where nodes' = mapNodes $ nodes m
+    where nodes' = nodes m
           start = head $ M.keys $ M.filter (=='S') m
           end = head $ M.keys $ M.filter (=='E') m
-
-mapNodes :: M.Map k (Node a) -> M.Map k (D16.Node a)
-mapNodes = M.map (\(Node a b) -> D16.Node a b)
 
 combineBestPaths :: [(Int, S.Set NodeKey)] -> Maybe Int
 combineBestPaths [] = Nothing

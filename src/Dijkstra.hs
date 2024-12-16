@@ -1,9 +1,8 @@
-module Dijkstra (dijkstra, Node(..)) where
+module Dijkstra (dijkstra) where
 
 import qualified Data.Map as M
 
-type DistanceMap a = M.Map a Int
-data Node a = Node Int (DistanceMap a)
+type Node a = M.Map a Int
 type UnvisitedNodes a = M.Map a (Maybe Int)
 type Nodes a = M.Map a (Node a)
 
@@ -27,10 +26,7 @@ updateUnvisited :: Ord a => Nodes a -> Int -> a -> UnvisitedNodes a -> Unvisited
 updateUnvisited nodes currentDistance currentNode unvisitedNodes = M.delete currentNode $ updateNeighbours nodes currentDistance unvisitedNodes currentNode
 
 updateNeighbours :: Ord a => Nodes a -> Int -> UnvisitedNodes a -> a -> UnvisitedNodes a
-updateNeighbours nodes currentDistance unvisitedNodes = foldl (updateNeighbour currentDistance) unvisitedNodes . M.toList . reachableNeighbours nodes
-
-reachableNeighbours :: Ord a => Nodes a -> a -> DistanceMap a
-reachableNeighbours input nodeName = case input M.! nodeName of (Node _ neighbours) -> neighbours
+updateNeighbours nodes currentDistance unvisitedNodes = foldl (updateNeighbour currentDistance) unvisitedNodes . M.toList . (nodes M.!)
 
 updateNeighbour :: Ord a => Int -> UnvisitedNodes a -> (a, Int) -> UnvisitedNodes a
 updateNeighbour currentDistance unvisitedNodes (key, distance) =
