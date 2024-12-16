@@ -22,14 +22,21 @@ parse :: String -> M.Map Coord Char
 parse = textToCoordMap
 
 solve1 :: M.Map Coord Char -> Maybe Int
-solve1 m = dijkstra nodes' (start, DirRight) (map (\d -> (end, d)) [DirLeft, DirRight, DirUp, DirDown])
-    where nodes' = nodes m
-          start = head $ M.keys $ M.filter (=='S') m
-          end = head $ M.keys $ M.filter (=='E') m
+solve1 = solve dijkstra
 
-nodes :: M.Map Coord Char -> M.Map NodeKey (M.Map NodeKey Int)
-nodes m = M.fromList $ concatMap (node spaces) spaces
+solve :: (M.Map NodeKey (M.Map NodeKey Int)  -> (Coord, Direction) -> [NodeKey] -> t) -> M.Map Coord Char -> t
+solve dijkstraImpl m = dijkstraImpl nodes' start endNodes
+    where start = (head $ M.keys $ M.filter (=='S') m, DirRight)
+          end = head $ M.keys $ M.filter (=='E') m
+          nodes' = nodes m start
+          endNodes = filter (`M.member` nodes') (map (\d -> (end, d)) [DirLeft, DirRight, DirUp, DirDown])
+
+nodes :: M.Map Coord Char -> NodeKey -> M.Map NodeKey (M.Map NodeKey Int)
+nodes m start = removeUnreachableNodes start $ M.fromList $ concatMap (node spaces) spaces
     where spaces = M.keysSet (M.filter (/='#') m)
+
+removeUnreachableNodes :: NodeKey -> M.Map NodeKey (M.Map NodeKey Int) -> M.Map NodeKey (M.Map NodeKey Int)
+removeUnreachableNodes start m = M.intersection m (M.insert start 0 $ M.unions $ M.elems m)
 
 node :: S.Set Coord -> Coord -> [(NodeKey, M.Map NodeKey Int)]
 node spaces c = map (dirNode spaces c) [DirLeft, DirRight, DirDown, DirUp]
@@ -61,16 +68,7 @@ isOpposite DirRight DirLeft = True
 isOpposite _ _ = False
 
 solve2 :: M.Map Coord Char -> Maybe Int
-solve2 m = combineBestPaths $ mapMaybe (D16.dijkstra nodes' (start, DirRight) . (\d -> (end, d))) [DirLeft, DirRight, DirUp, DirDown]
-    where nodes' = nodes m
-          start = head $ M.keys $ M.filter (=='S') m
-          end = head $ M.keys $ M.filter (=='E') m
+solve2 = fmap uniqueNodes . solve D16.dijkstra
 
-combineBestPaths :: [(Int, S.Set NodeKey)] -> Maybe Int
-combineBestPaths [] = Nothing
-combineBestPaths results =
-    let shortestPath = minimum (map fst results)
-    in  Just $ length $ S.unions $ map (uniqueCoords . snd) $ filter ((==shortestPath) . fst) results
-
-uniqueCoords :: S.Set (Coord, b) -> S.Set Coord
-uniqueCoords = S.map fst
+uniqueNodes :: (Int, S.Set NodeKey) -> Int
+uniqueNodes (_, path) = length (S.map fst path)
