@@ -1,4 +1,4 @@
-module Dijkstra (dijkstra) where
+module Dijkstra (dijkstra, Node(..)) where
 
 import qualified Data.Map as M
 
@@ -7,18 +7,18 @@ data Node a = Node Int (DistanceMap a)
 type UnvisitedNodes a = M.Map a (Maybe Int)
 type Nodes a = M.Map a (Node a)
 
-dijkstra :: Ord a => Nodes a -> a -> a -> Maybe Int
+dijkstra :: Ord a => Nodes a -> a -> [a] -> Maybe Int
 dijkstra nodes start = dijkstra' nodes (M.map (const Nothing) nodes) (Just (start, 0))
 
-dijkstra' :: Ord a => Nodes a -> UnvisitedNodes a -> Maybe (a, Int) -> a -> Maybe Int
+dijkstra' :: Ord a => Nodes a -> UnvisitedNodes a -> Maybe (a, Int) -> [a] -> Maybe Int
 dijkstra' _ _ Nothing _ = Nothing
-dijkstra' nodes unvisitedNodes (Just (currentNode, currentDistance)) targetNode
-    | currentNode == targetNode = Just currentDistance
+dijkstra' nodes unvisitedNodes (Just (currentNode, currentDistance)) targetNodes
+    | currentNode `elem` targetNodes = Just currentDistance
     | otherwise = 
         let unvisitedNodes' = updateUnvisited nodes currentDistance currentNode unvisitedNodes
-        in  dijkstraStep nodes targetNode unvisitedNodes'
+        in  dijkstraStep nodes targetNodes unvisitedNodes'
 
-dijkstraStep :: Ord a => Nodes a -> a -> UnvisitedNodes a -> Maybe Int
+dijkstraStep :: Ord a => Nodes a -> [a] -> UnvisitedNodes a -> Maybe Int
 dijkstraStep input targetNode unvisitedNodes =
     let nextNode = smallestDistance unvisitedNodes
     in  dijkstra' input unvisitedNodes nextNode targetNode

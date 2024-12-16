@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Dijkstra
+      Dijkstra16
       Lib
       P1
       P10
@@ -36,6 +37,7 @@ library
       P14
       P15
       P15Set
+      P16
       P2
       P3
       P4
