@@ -63,6 +63,7 @@ library
     , matrix
     , number-length >=0.2.1.0
     , split
+    , time
     , vector
   default-language: Haskell2010
 
@@ -82,6 +83,7 @@ executable advent2024-exe
     , matrix
     , number-length >=0.2.1.0
     , split
+    , time
     , vector
   default-language: Haskell2010
 
@@ -102,5 +104,6 @@ test-suite advent2024-test
     , matrix
     , number-length >=0.2.1.0
     , split
+    , time
     , vector
   default-language: Haskell2010
