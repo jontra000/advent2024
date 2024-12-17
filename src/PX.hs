@@ -2,6 +2,7 @@ module PX (run1, run2, inputLocation) where
 
 import qualified Data.Map as M
 import qualified Data.Set as S
+
 run1 = solve1 . parse
 
 run2 = solve2 . parse
