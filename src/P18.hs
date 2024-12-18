@@ -6,7 +6,7 @@ import Data.List.Split (splitOn)
 import Lib (Coord)
 import Dijkstra (dijkstra)
 import Data.Maybe (isNothing)
-import Data.List (inits, find)
+import Data.List (inits)
 
 run1 :: String -> Maybe Int
 run1 = solve1 . parse
@@ -44,4 +44,15 @@ solve :: [Coord] -> Maybe Int
 solve input = dijkstra (nodes (S.fromList input)) (0,0) [(70,70)]
 
 solve2 :: [Coord] -> Maybe Coord
-solve2 input = last <$> find (isNothing . solve) (drop 1024 $ inits input)
+solve2 = fmap last . binarySearch (isNothing . solve) . inits
+
+binarySearch :: ([Coord] -> Bool) -> [[Coord]] -> Maybe [Coord]
+binarySearch predicate xs = go 0 (length xs - 1)
+  where
+    go lo hi
+      | lo == (hi - 1) = Just (xs !! hi)
+      | lo > hi = Nothing
+      | otherwise =
+          let mid = (lo + hi) `div` 2
+              midVal = xs !! mid
+          in if predicate midVal then go lo mid else go mid hi 
