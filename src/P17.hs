@@ -35,41 +35,38 @@ parseProgram :: String -> Program
 parseProgram = map read . splitOn "," . last . words
 
 solve1 :: Input -> String
-solve1 (Input registers program) = intercalate "," $ map show $ executeProgram 0 program registers
+solve1 (Input registers program) = intercalate "," $ map show $ executeProgram program registers
 
-executeProgram :: Int -> Program -> Registers -> [Int]
-executeProgram pointer program registers
-    | pointer < length program  - 1 =
-        let opcode = program !! pointer
-            operand = program !! (pointer+1)
-        in  doOpCode opcode operand pointer registers program
-    | otherwise = []
-
-doOpCode :: Int -> Int -> Int -> Registers -> Program -> [Int]
-doOpCode 0 operand pointer registers@(Registers a b c) program =
+doOpCode :: Int -> Int -> Registers -> Registers
+doOpCode 0 operand registers@(Registers a b c) =
     let val = combo operand registers
         denominator = 2^val
         result = a `div` denominator
-    in  executeProgram (pointer+2) program (Registers result b c)
-doOpCode 1 operand pointer (Registers a b c) program =
+    in  Registers result b c
+doOpCode 1 operand (Registers a b c) =
     let result = b .^. operand
-    in  executeProgram (pointer+2) program (Registers a result c)
-doOpCode 2 operand pointer registers@(Registers a _ c) program =
+    in  Registers a result c
+doOpCode 2 operand registers@(Registers a _ c) =
     let result = combo operand registers `mod` 8
-    in  executeProgram (pointer+2) program (Registers a result c)
-doOpCode 3 _ pointer registers@(Registers 0 _ _) program = executeProgram (pointer+2) program registers
-doOpCode 3 operand _ registers program = executeProgram operand program registers
-doOpCode 4 _ pointer (Registers a b c) program =
+    in  Registers a result c
+doOpCode 4 _ (Registers a b c) =
     let result = b .^. c
-    in  executeProgram (pointer+2) program (Registers a result c)
-doOpCode 5 operand pointer registers program = (combo operand registers `mod` 8) : executeProgram (pointer+2) program registers
-doOpCode 6 operand pointer registers@(Registers a _ c) program =
+    in  Registers a result c
+doOpCode 6 operand registers@(Registers a _ c) =
     let result = a `div` (2^combo operand registers)
-    in  executeProgram (pointer+2) program (Registers a result c)
-doOpCode 7 operand pointer registers@(Registers a b _) program =
+    in  Registers a result c
+doOpCode 7 operand registers@(Registers a b _) =
     let result = a `div` (2^combo operand registers)
-    in  executeProgram (pointer+2) program (Registers a b result)
-doOpCode x _ _ _ _ = error ("bad opcode: " ++ show x)
+    in  Registers a b result
+doOpCode x _ _ = error ("bad opcode: " ++ show x)
+
+executeProgram :: Program -> Registers -> [Int]
+executeProgram program registers = go registers program
+    where go registers'@(Registers 0 _ _) (3:_:program') = go registers' program'
+          go registers' (3:lit:_) = go registers' (drop lit program)
+          go registers' (5:operand:program') = (combo operand registers' `mod` 8) : go registers' program'
+          go registers' (opcode:operand:program') = go (doOpCode opcode operand registers') program'
+          go _ _ = []
 
 combo :: Int -> Registers -> Int
 combo 0 _ = 0
@@ -89,7 +86,7 @@ findDigit :: [[Int]] -> Program -> Int -> [Int]
 findDigit [] _ acc = [acc]
 findDigit (target:targets) program acc =
     let nextAs = map (+(acc*8)) [0..7]
-        results = filter ((== target) .  executeProgram 0 program . setA) nextAs
+        results = filter ((== target) .  executeProgram program . setA) nextAs
     in  concatMap (findDigit targets program) results
 
 setA :: Int -> Registers
