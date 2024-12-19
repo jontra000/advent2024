@@ -34,10 +34,7 @@ canMake available target =
     in  any (canMake available . (`drop` target) . length) matches
 
 solve2 :: Input -> Int
-solve2 (Input available targets) = solveMemo available targets
-
-solveMemo :: [String] -> [String] -> Int
-solveMemo available targets = fst $ foldl go (0, M.empty) targets
+solve2 (Input available targets) = fst $ foldl go (0, M.empty) targets
     where go (acc, cache) target =
             let (result, cache') = solveSingle available cache target
             in  (acc + result, cache')
