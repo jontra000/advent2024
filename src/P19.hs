@@ -1,12 +1,10 @@
 module P19 (run1, run2, inputLocation) where
 
-import qualified Data.Map as M
 import Data.List.Split (splitOn)
 import Data.List (isPrefixOf)
-import Lib (memoize)
+import Data.MemoTrie (memo)
 
 data Input = Input [String] [String]
-type Cache = M.Map String Int
 
 run1 :: String -> Int
 run1 = solve1 . parse
@@ -34,20 +32,9 @@ canMake available target =
     in  any (canMake available . (`drop` target) . length) matches
 
 solve2 :: Input -> Int
-solve2 (Input available targets) = fst $ foldl go (0, M.empty) targets
-    where go (acc, cache) target =
-            let (result, cache') = solveSingle available cache target
-            in  (acc + result, cache')
-
-solveSingle :: [String] -> Cache -> String -> (Int, Cache)
-solveSingle _ cache [] = (1, cache)
-solveSingle available cache target = memoize cache target $ solveSingle' available cache target
-
-solveSingle' :: [String] -> Cache -> [Char] -> (Int, Cache)
-solveSingle' available cache target =
-    let matches = filter (`isPrefixOf` target) available
-        (result, cacheFinal) = foldl go (0, cache) matches
-    in  (result, M.insert target result cacheFinal)
-    where go (acc, cache') match =
-            let (result, cache'') = solveSingle available cache' (drop (length match) target)
-            in  (acc + result, cache'')
+solve2 (Input available targets) = sum $ map goMemo targets
+    where goMemo = memo go 
+          go [] = 1
+          go target = 
+            let matches = filter (`isPrefixOf` target) available
+            in  sum $ map (goMemo . (`drop` target) . length) matches
