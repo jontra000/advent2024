@@ -3,7 +3,7 @@ module P20 (run1, run2, inputLocation) where
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Lib (textToCoordMap, Coord)
-import Data.List (find)
+import Data.List (find, tails)
 
 type Map = M.Map Coord Char
 
@@ -30,8 +30,7 @@ startNode :: Map -> Coord
 startNode = head . M.keys . M.filter (== 'S')
 
 findCheats :: Int -> Int -> [Coord] -> Int
-findCheats _ _ [] = 0
-findCheats cheatTime toSave (x:xs) = findCheatsFrom cheatTime toSave x xs + findCheats cheatTime toSave xs
+findCheats cheatTime toSave xs = sum $ zipWith (findCheatsFrom cheatTime toSave) xs (tail $ tails xs)
 
 findCheatsFrom :: Int -> Int -> Coord -> [Coord] -> Int
 findCheatsFrom cheatTime toSave start = length . filter (>= toSave) . zipWith (cheatTimeSaved cheatTime start) [1..]
