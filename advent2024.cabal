@@ -27,6 +27,7 @@ library
   exposed-modules:
       Dijkstra
       Dijkstra16
+      Dijkstra20
       Lib
       P1
       P10
@@ -42,6 +43,7 @@ library
       P18
       P19
       P2
+      P20
       P3
       P4
       P4SubMatrix
