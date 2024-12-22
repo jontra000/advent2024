@@ -44,6 +44,7 @@ library
       P19
       P2
       P20
+      P21
       P3
       P4
       P4SubMatrix
@@ -68,6 +69,7 @@ library
     , containers
     , matrix
     , number-length >=0.2.1.0
+    , parallel
     , split
     , time
     , vector
@@ -89,6 +91,7 @@ executable advent2024-exe
     , containers
     , matrix
     , number-length >=0.2.1.0
+    , parallel
     , split
     , time
     , vector
@@ -111,6 +114,7 @@ test-suite advent2024-test
     , containers
     , matrix
     , number-length >=0.2.1.0
+    , parallel
     , split
     , time
     , vector

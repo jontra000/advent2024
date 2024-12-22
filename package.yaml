@@ -28,6 +28,7 @@ dependencies:
 - vector
 - time
 - MemoTrie
+- parallel
 
 ghc-options:
 - -Wall
