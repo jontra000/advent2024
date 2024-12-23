@@ -1,36 +1,34 @@
 module P23 (run1, run2, inputLocation) where
 
-import qualified Data.Map as M
 import qualified Data.Set as S
-import Data.List (nub, sort, partition, intercalate, maximumBy, group, tails, intersect)
-import Data.Function (on)
+import Data.List (nub, sort, intercalate, isPrefixOf)
 
+run1 :: String -> Int
 run1 = solve1 . parse
 
+run2 :: String -> String
 run2 = solve2 . parse
 
 inputLocation :: String
 inputLocation = "inputs/input23"
 
+parse :: String -> [(String, String)]
 parse = map parseLine . lines
 
+parseLine :: String -> (String, String)
 parseLine (a:b:_:c:d:_) = ([a,b], [c,d])
+parseLine x = error $ "Invalid input: " ++ x
 
-solve1 = length . setsOf3
+solve1 :: [(String, String)] -> Int
+solve1 = length . filter containsT . setsOf3
 
-setsOf3 xs =
-    let names = nub $ concatMap (\(a,b) -> [a,b]) xs
-    in  pruneDups $ concatMap (setsOf3' xs) $ filter ((=='t' ) . head) names
+setsOf3 :: [(String, String)] -> [[String]]
+setsOf3 = map (uncurry (:)) . (!! 2) . combineLinksSeries
 
-setsOf3' xs name =
-    let connections' = connections xs name
-    in  map (\(a,b) -> (name, a ,b)) $ filter (\(a,b) -> a `elem` connections' && b `elem` connections') xs
+containsT :: [String] -> Bool
+containsT = any ("t" `isPrefixOf`)
 
-connections xs name = map snd (filter ((==name) . fst) xs) ++ map fst (filter ((==name) . snd) xs)
-
-pruneDups = nub . map (sort . (\(a,b,c) -> [a,b,c]))
-
--- solve2 = password . biggestGroup
+solve2 :: [(String, String)] -> String
 solve2 = password . uncurry (:) . head . last . takeWhile (not . null) . combineLinksSeries
 
 password :: [String] -> String
@@ -43,6 +41,7 @@ combineLinksSeries xs =
         initialLinks = map (\n -> (n, [])) names
     in  iterate (combineLinks directLinks) initialLinks
 
+combineLinks :: S.Set (String, String) -> [(String, [String])] -> [(String, [String])]
 combineLinks _ [] = []
 combineLinks directLinks ((x,links):xs) =
     let possibleMatches = map fst $ filter ((==links) . snd) xs
