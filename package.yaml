@@ -29,6 +29,8 @@ dependencies:
 - time
 - MemoTrie
 - parallel
+- text
+- strings
 
 ghc-options:
 - -Wall
