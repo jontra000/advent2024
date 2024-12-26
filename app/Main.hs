@@ -1,7 +1,7 @@
 module Main (main) where
 
 import Data.Time
-import P25
+import P24
 
 main :: IO ()
 main = do
